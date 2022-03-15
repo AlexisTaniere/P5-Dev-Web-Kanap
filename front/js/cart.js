@@ -78,7 +78,7 @@ function displayCart(){
               }
        })
        .catch((err) => {
-         alert("erreur" + err);
+         alert("erreur " + err);
        });
        
     }
@@ -142,19 +142,21 @@ function modifyProduct(){
         // console.log(select[i].valueAsNumber);
 
         const quantity = select[i].valueAsNumber
-        const article = select[i].closest("article");
-        const id = article.dataset.id;
-        const color = article.dataset.color;
-
-        const index = cart.findIndex(item => item.id === id && item.color === color);
-        console.log(id, color);
-        console.log(index);
+       
 
         if(!isCorrectNumber(quantity)){
           alert('La quantité choisie doit être comprise entre 1 et 100');
           window.location.reload();
         }
         else{
+          const article = select[i].closest("article");
+          const id = article.dataset.id;
+          const color = article.dataset.color;
+  
+          const index = cart.findIndex(item => item.id === id && item.color === color);
+          console.log(id, color);
+          console.log(index);
+
         cart[index].quantity = quantity;
         localStorage.setItem("cart",JSON.stringify(cart));
         window.location.reload();
