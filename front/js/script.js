@@ -1,3 +1,4 @@
+// Récupération de l'ensemble des produits sur l'API
 fetch("http://localhost:3000/api/products")
 .then(function(res) {
     if (res.ok) {
@@ -6,9 +7,13 @@ fetch("http://localhost:3000/api/products")
   })
   .then(function(value) {
 
-    let element = document.getElementById('items');
-    // console.log(element);
 
+    // On pointe sur l'élément ayant pour identifiant "items"
+    let element = document.getElementById('items');
+    
+    // On ajoute de manière dynamique les éléments de l'API au DOM
+    // (identifiant, url de l'image, valeur alternative pour l'image, nom et description du produit)
+    // pour chaque produit trouvé.
     for(values of value){
         element.innerHTML +=  `
         <a href="./product.html?id=${values._id}">

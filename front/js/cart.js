@@ -2,8 +2,9 @@ let cart = JSON.parse(localStorage.getItem("cart"));
 
 let urlApi = "http://localhost:3000/api/products/";
 
-
+//----------------------------------------------------------------
 // Calcule la quantité totale de produits présents dans le panier
+//----------------------------------------------------------------
 function totalQuantity(){
   let elementQuantity = document.getElementById('totalQuantity');
   let totalQuantity = 0;
@@ -13,6 +14,7 @@ function totalQuantity(){
   elementQuantity.innerHTML = totalQuantity;
 }
 
+// Regexes pour vérifier les données saisies dans le formulaire de confirmation de commande
 function isCorrectNumber(number){
   return /^([1-9][0-9]?|100)$/.test(number);
 }
@@ -30,6 +32,10 @@ function isCorrectMail(char){
     return /^[a-zA-Z0-9\'\-çñàéèêëïîôüù ]{2,}$/.test(char);
   }
 
+
+//-------------------------------------------------------------------
+// Affiche de manière dynamique les éléments présents dans le panier
+//-------------------------------------------------------------------
 function displayCart(){
   let element = document.getElementById('cart__items');
   if (!cart){
@@ -72,6 +78,7 @@ function displayCart(){
                 </div>
               </article>`;  
               
+              // Test pour savoir si la boucle arrive à sa dernière itération
               if(i === cart.length - 1){
               deleteProduct();
               modifyProduct();
@@ -86,8 +93,13 @@ function displayCart(){
 
 displayCart();
 
+
+//------------------------------------------------------------
+// Calcule le prix total des produits présents dans le panier
+//------------------------------------------------------------
 function totalPrice(){
   let totalPrice = 0;
+
   for (let i = 0; i < cart.length; i++){
     let urlproduct = urlApi + cart[i].id;
     let quantity = cart[i].quantity;
@@ -99,6 +111,8 @@ function totalPrice(){
     })
     .then(function(value){
       totalPrice += value.price * quantity;
+
+      //Modifie le DOM lors de la dernière itération de la boucle
       if(i === cart.length - 1){
         let elementPrice = document.getElementById('totalPrice');
         elementPrice.innerHTML = totalPrice;
@@ -107,20 +121,26 @@ function totalPrice(){
   }
 }
 
+
+//-------------------------------------------------------------------------
+// Supprime l'élément du panier correspondant au bouton "supprimer" cliqué
+//-------------------------------------------------------------------------
 function deleteProduct(){
   let select = document.getElementsByClassName('deleteItem');
+
+    // Écoute le clic sur l'ensemble des boutons "supprimer"
     for(let i = 0; i < select.length; i++){
       select[i].addEventListener('click', function (e) {
-        console.log("Suppr article " + i);
 
+        // Récupère l'article le plus proche du bouton cliqué, son identifiant et sa couleur
         const article = select[i].closest("article");
         const id = article.dataset.id;
         const color = article.dataset.color;
 
+        // Récupère l'index du produit correspondant à l'identifiant et à la couleur définis
         const index = cart.findIndex(item => item.id === id && item.color === color);
-        console.log(id, color);
-        console.log(index);
 
+        // Supprime du panier le produit correspondant
         cart.splice(index,1);
         localStorage.setItem("cart",JSON.stringify(cart));
 
@@ -128,18 +148,23 @@ function deleteProduct(){
 
         alert('Cet article a bien été supprimé');
       });
+
+      // Calcule de nouveau le prix et la quantité total après suppression
       totalPrice();
       totalQuantity();
       
     }
 }
 
+
+//--------------------------------------------------------------------------
+// Modifie la quantité d'un produit après l'écoute d'un changement (change)
+//--------------------------------------------------------------------------
 function modifyProduct(){
     let select = document.getElementsByClassName('itemQuantity');
     
     for(let i = 0; i < select.length; i++){
       select[i].addEventListener('change', function (e) {
-        // console.log(select[i].valueAsNumber);
 
         const quantity = select[i].valueAsNumber
        
@@ -154,8 +179,6 @@ function modifyProduct(){
           const color = article.dataset.color;
   
           const index = cart.findIndex(item => item.id === id && item.color === color);
-          console.log(id, color);
-          console.log(index);
 
         cart[index].quantity = quantity;
         localStorage.setItem("cart",JSON.stringify(cart));
@@ -167,12 +190,13 @@ function modifyProduct(){
     }
 
 }
-
+//-------------------------------------------------------------------------------------
+// Test le prénom avec le regex isCorrectChar et affiche un message d'erreur si besoin
+//-------------------------------------------------------------------------------------
 function testFirstName(){
     let firstName = document.getElementById('firstName');
     firstName.addEventListener('input', function (e){
-      console.log(firstName.value);
-      console.log(isCorrectChar(firstName.value));
+  
       let error = document.getElementById('firstNameErrorMsg');
       if(!isCorrectChar(firstName.value) && firstName.value !== ""){
         error.innerHTML = "Prénom non valide";
@@ -187,12 +211,14 @@ function testFirstName(){
 
 testFirstName();
 
+
+//-----------------------------------------------------------------------------
+// Teste si le prénom est bien renseigné et s'il n'y a pas de message d'erreur
+//-----------------------------------------------------------------------------
 function validFirstName(){
   let firstName = document.getElementById('firstName').value;
   let error = document.getElementById('firstNameErrorMsg').innerHTML;
 
-    console.log(firstName);
-    console.log(error);
   if(firstName !== "" && error === ""){
     return true;
   }
@@ -201,11 +227,14 @@ function validFirstName(){
   }
 }
 
+
+//----------------------------------------------------------------------------------
+// Test le nom avec le regex isCorrectChar et affiche un message d'erreur si besoin
+//----------------------------------------------------------------------------------
 function testLastName(){
   let lastName = document.getElementById('lastName');
   lastName.addEventListener('input', function (e){
-    console.log(lastName.value);
-    console.log(isCorrectChar(lastName.value));
+ 
     let error = document.getElementById('lastNameErrorMsg');
     if(!isCorrectChar(lastName.value) && lastName.value !== ""){
       error.innerHTML = "Nom non valide";
@@ -219,12 +248,14 @@ function testLastName(){
 }
 testLastName();
 
+
+//--------------------------------------------------------------------------
+// Teste si le nom est bien renseigné et s'il n'y a pas de message d'erreur
+//--------------------------------------------------------------------------
 function validLastName(){
   let lastName = document.getElementById('lastName').value;
   let error = document.getElementById('lastNameErrorMsg').innerHTML;
 
-    console.log(lastName);
-    console.log(error);
   if(lastName !== "" && error === ""){
     return true;
   }
@@ -234,12 +265,13 @@ function validLastName(){
 }
 
 
-
+//------------------------------------------------------------------------------------
+// Test la ville avec le regex isCorrectChar et affiche un message d'erreur si besoin
+//------------------------------------------------------------------------------------
 function testCity(){
   let city = document.getElementById('city');
   city.addEventListener('input', function (e){
-    console.log(city.value);
-    console.log(isCorrectChar(city.value));
+
     let error = document.getElementById('cityErrorMsg');
     if(!isCorrectChar(city.value) && city.value !== ""){
       error.innerHTML = "Ville non valide";
@@ -254,12 +286,14 @@ function testCity(){
 
 testCity();
 
+
+//-----------------------------------------------------------------------------
+// Teste si la ville est bien renseignée et s'il n'y a pas de message d'erreur
+//-----------------------------------------------------------------------------
 function validCity(){
   let city = document.getElementById('city').value;
   let error = document.getElementById('cityErrorMsg').innerHTML;
 
-    console.log(city);
-    console.log(error);
   if(city !== "" && error === ""){
     return true;
   }
@@ -268,6 +302,9 @@ function validCity(){
   }
 }
 
+//----------------------------------------------------------------------------------------
+// Test l'adresse avec le regex isCorrectAddress et affiche un message d'erreur si besoin
+//----------------------------------------------------------------------------------------
 function testAddress(){
   let address = document.getElementById('address');
 
@@ -286,12 +323,14 @@ function testAddress(){
 
 testAddress();
 
+
+//------------------------------------------------------------------------------
+// Teste si l'adresse est bien renseignée et s'il n'y a pas de message d'erreur
+//------------------------------------------------------------------------------
 function validAddress(){
   let address = document.getElementById('address').value;
   let error = document.getElementById('addressErrorMsg').innerHTML;
 
-    console.log(address);
-    console.log(error);
   if(address !== "" && error === ""){
     return true;
   }
@@ -300,6 +339,10 @@ function validAddress(){
   }
 }
 
+
+//-----------------------------------------------------------------------------------
+// Test le mail avec le regex isCorrectMail et affiche un message d'erreur si besoin
+//-----------------------------------------------------------------------------------
 function testMail(){
   let mail = document.getElementById('email');
   mail.addEventListener('input', function(e){
@@ -312,18 +355,19 @@ function testMail(){
       error.innerHTML = "";
       return true;
     }
-    console.log(isCorrectMail(mail.value));
   });
 }
 
 testMail();
 
+
+//---------------------------------------------------------------------------
+// Teste si le mail est bien renseigné et s'il n'y a pas de message d'erreur
+//---------------------------------------------------------------------------
 function validMail(){
   let mail = document.getElementById('email').value;
   let error = document.getElementById('emailErrorMsg').innerHTML;
 
-    console.log(mail);
-    console.log(error);
   if(mail !== "" && error === ""){
     return true;
   }
@@ -332,6 +376,10 @@ function validMail(){
   }
 }
 
+
+//---------------------------------------------------------------------------------------------------
+// Teste l'ensemble des éléments du formulaire et envoie un contact et une liste de produits à l'API
+//---------------------------------------------------------------------------------------------------
 function order(){
   let order = document.getElementById('order');
 
@@ -342,9 +390,11 @@ function order(){
     }
     else{
 
+      // Si le prénom, le nom, la ville, l'adresse et la mail sont corrects
       if(validFirstName() && validLastName() && validCity() && validAddress() && validMail()){
-      console.log("Nom, prénom, adresse, ville et mail valides");
 
+
+        // Création d'un objet contact à partir des éléments saisis dans le formulaire
         let contact = {
           firstName: document.getElementById("firstName").value,
           lastName: document.getElementById("lastName").value,
@@ -353,16 +403,19 @@ function order(){
           email: document.getElementById("email").value,
         }
 
+        // Création d'une liste d'identifiants de produits
         let productId = []; 
           for (product of cart) {
              productId.push(product.id)
           }
 
+        // Création d'un objet order qui sera envoyé à l'API
         let order = { 
           contact,
           products: productId,
         };
 
+        // Définition de la méthode et des informations à envoyer à l'API
         const options = {
           method: "POST",
           body: JSON.stringify(order),
@@ -372,6 +425,7 @@ function order(){
           },
          };
 
+        // Envoi des éléments à l'API et récupération de l'identifiant de la commande
         fetch("http://localhost:3000/api/products/order", options)
           .then(response => response.json())
           .then(data => {
@@ -386,8 +440,6 @@ function order(){
         alert("Veuillez renseigner correctement tous les champs du formulaire");
       }
     }
-
-    // window.location.reload();
   });
   
 }
